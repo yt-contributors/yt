@@ -1,0 +1,93 @@
+/* ========================================================================= */
+/* ------------------------------------------------------------------------- */
+/*!
+  \file			config.h
+  \date			March 2014
+  \author		Nicu Tofan
+
+*/
+/* ------------------------------------------------------------------------- */
+/* ========================================================================= */
+#ifndef YT_config_h_INCLUDE
+#define YT_config_h_INCLUDE
+
+//
+//
+//
+//
+/*  INCLUDES    ------------------------------------------------------------ */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*  INCLUDES    ============================================================ */
+//
+//
+//
+//
+/*  DEFINITIONS    --------------------------------------------------------- */
+
+//! the name of this project
+#define @PROJECT_NAME_U@_PROJECT_NAME   "@PROJECT_NAME@"
+
+//! major version (ABI not preserved between these)
+#define @PROJECT_NAME_U@_MAJOR_VERSION      @YT_MAJOR_VERSION@
+
+//! minor version; ABI is preserved
+#define @PROJECT_NAME_U@_MINOR_VERSION      @YT_MINOR_VERSION@
+
+//! bug fixes
+#define @PROJECT_NAME_U@_PATCH_VERSION      @YT_PATCH_VERSION@
+
+//! the version ans a 32-bit integer
+#define @PROJECT_NAME_U@_VERSION            (\
+    @PROJECT_NAME_U@_MAJOR_VERSION * 0x100000 + \
+    @PROJECT_NAME_U@_MINOR_VERSION * 0x1000 + \
+    @PROJECT_NAME_U@_PATCH_VERSION * 0x1)
+
+//! version as a string
+#define @PROJECT_NAME_U@_VERSION_S          "@YT_VERSION@"
+
+//! when it was build (UTC)
+#define @PROJECT_NAME_U@_BUILD_TIME         "@YT_BUILD_TIME@"
+
+//! components on target system
+/// @{
+#cmakedefine YT_SYSLOG_FOUND
+#cmakedefine HAVE_SNPRINTF
+/// @}
+
+//! debug or not
+#ifndef YT_DEBUG
+#cmakedefine YT_DEBUG
+#endif
+
+//! windows or not
+#cmakedefine TARGET_SYSTEM_WIN32
+
+/*  DEFINITIONS    ========================================================= */
+//
+//
+//
+//
+/*  DATA    ---------------------------------------------------------------- */
+
+/*  DATA    ================================================================ */
+//
+//
+//
+//
+/*  FUNCTIONS    ----------------------------------------------------------- */
+
+/*  FUNCTIONS    =========================================================== */
+//
+//
+//
+//
+/* ------------------------------------------------------------------------- */
+/* ========================================================================= */
+#ifdef __cplusplus
+}
+#endif
+#endif /* YT_config_h_INCLUDE */
