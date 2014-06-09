@@ -19,7 +19,11 @@
 
 #include "ydir.h"
 
+#include <yt/ylogger.h>
+
 #include <string.h>
+#include <unistd.h>
+#include <errno.h>
 
 /*  INCLUDES    ============================================================ */
 //
@@ -44,9 +48,27 @@
 
 /* ------------------------------------------------------------------------- */
 YDIR_EXPORT yt_func_exit_code_t
-YDIR_IMPLEMENT_ME ydir_remove(ydir_t * ydir, const char * path)
+YDIR_IMPLEMENT_ME ydir_remove (ydir_t * ydir, const char * path)
 {
-    return YT_FUNC_OK;
+    if (path == NULL) return YT_FUNC_BAD_INPUT;
+
+    yt_func_start;
+
+    if ( ydir_path_is_relative(path) ) {
+
+    } else {
+#if TARGET_SYSTEM_WIN32
+        /** @todo TARGET_SYSTEM_WIN32 */
+#else
+        if (0 != remove (path)) {
+            err_message ("Failed to remove %s; error %d", path, errno);
+            exitcode = YT_FUNC_GENERIC_ERROR;
+            break;
+        }
+#endif
+    }
+    yt_func_end;
+    yt_func_ret;
 }
 /* ========================================================================= */
 

@@ -1,11 +1,11 @@
 /* ========================================================================= */
 /* ------------------------------------------------------------------------- */
 /*!
-  \file			ydir_path_is_relative.c
+  \file			ydir_symlink.c
   \date			June 2014
   \author		Nicu Tofan
 
-  \brief		Implements ydir_path_is_relative function in ydir library
+  \brief		Implements ydir_symlink function in ydir library
 
 
 */
@@ -19,10 +19,10 @@
 
 #include "ydir.h"
 
-#include <string.h>
+#include <yt/ylogger.h>
 
-
-
+#include <errno.h>
+#include <unistd.h>
 
 /*  INCLUDES    ============================================================ */
 //
@@ -46,19 +46,53 @@
 /*  FUNCTIONS    ----------------------------------------------------------- */
 
 /* ------------------------------------------------------------------------- */
-YDIR_EXPORT int
-YDIR_IMPLEMENT_ME ydir_path_is_relative (const char * path)
+YDIR_EXPORT yt_func_exit_code_t
+YDIR_IMPLEMENT_ME ydir_symlink(
+        ydir_t * ydir, const char * path_src, const char * path_dest)
 {
-    if (path == NULL) return 0;
-    if (path[0] == 0) return 0;
+
+    // no path does not exists
+    if ((path_src == NULL) || (path_src == NULL)) {
+        return YT_FUNC_BAD_INPUT;
+    }
+
+    yt_func_start;
+
+    // cache relativity
+    int src_rel = ydir_path_is_relative (path_src);
+    int dest_rel = ydir_path_is_relative (path_dest);
 
 #if TARGET_SYSTEM_WIN32
-    if (path[1] == ':') return 0;
-    if ((path[0] == '\\') && (path[1] == '\\')) return 0;
+    /** @todo TARGET_SYSTEM_WIN32 */
+
 #else
-    if (path[0] == '/') return 0;
+    if (src_rel) {
+        if (dest_rel) {
+            /** @todo relativity */
+        } else {
+            /** @todo relativity */
+        }
+    } else {
+        if (dest_rel) {
+            /** @todo relativity */
+        } else {
+             if (symlink (path_src, path_dest) != 0) {
+                 err_message (
+                             "Could not create symbolic link %s "
+                             "towards %s; error %d",
+                             path_dest,
+                             path_src,
+                             errno);
+                 exitcode = YT_FUNC_GENERIC_ERROR;
+                 break;
+             }
+        }
+    }
+
 #endif
-    return 1;
+
+    yt_func_end;
+    yt_func_ret;
 }
 /* ========================================================================= */
 

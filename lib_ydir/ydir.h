@@ -109,7 +109,7 @@ ydir_cd (
 /// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
 /// to compute an absolute path
 ///
-YDIR_EXPORT yt_func_exit_code_t
+YDIR_EXPORT int
 ydir_file_exists (
         struct _ydir_t * ydir,
         const char * path);
@@ -177,6 +177,17 @@ YDIR_EXPORT yt_func_exit_code_t
 ydir_mkpath (
         struct _ydir_t * ydir,
         const char * path);
+
+//! create a symbolic link
+///
+/// If the any path is relative (ydir_path_is_relative() returns 1)
+/// internal path is used to compute an absolute path.
+///
+YDIR_EXPORT yt_func_exit_code_t
+ydir_symlink (
+        struct _ydir_t * ydir,
+        const char * path_src,
+        const char * path_dest);
 
 //! compute the path relative to our directory
 ///

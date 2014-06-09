@@ -100,7 +100,7 @@ yutf8_join (yutf8_t * out, size_t count, ...)
     va_start (argptr, count);
     for (i = 0; i < count; ++i) {
         crt_it = va_arg(argptr, char*);
-        result_len += strlen(crt_it);
+        result_len += (crt_it == NULL ? 0 : strlen(crt_it));
     }
     va_end (argptr);
 
@@ -113,9 +113,11 @@ yutf8_join (yutf8_t * out, size_t count, ...)
     va_start (argptr, count);
     for (i = 0; i < count; ++i) {
         crt_it = va_arg(argptr, char*);
-        crt_len = strlen(crt_it);
-        memcpy (ret_iter, crt_it, crt_len);
-        ret_iter += crt_len;
+        if (crt_it != NULL) {
+            crt_len = strlen(crt_it);
+            memcpy (ret_iter, crt_it, crt_len);
+            ret_iter += crt_len;
+        }
     }
     va_end (argptr);
     *ret_iter = 0;
@@ -155,7 +157,7 @@ yutf8_join_sep (const char * separator, yutf8_t * out, size_t count, ...)
     va_start (argptr, count);
     for (i = 0; i < count; ++i) {
         crt_it = va_arg(argptr, char*);
-        result_len += strlen(crt_it) + sep_len;
+        result_len += (crt_it == NULL ? 0 : strlen(crt_it)) + sep_len;
     }
     if (i > 1) result_len -= sep_len;
     va_end (argptr);
@@ -169,16 +171,20 @@ yutf8_join_sep (const char * separator, yutf8_t * out, size_t count, ...)
     va_start (argptr, count);
     for (i = 0; i < count-1; ++i) {
         crt_it = va_arg(argptr, char*);
-        crt_len = strlen(crt_it);
-        memcpy (ret_iter, crt_it, crt_len);
-        ret_iter += crt_len;
+        if (crt_it != NULL) {
+            crt_len = strlen(crt_it);
+            memcpy (ret_iter, crt_it, crt_len);
+            ret_iter += crt_len;
+        }
         memcpy (ret_iter, separator, sep_len);
         ret_iter += sep_len;
     }
     crt_it = va_arg(argptr, char*);
-    crt_len = strlen(crt_it);
-    memcpy (ret_iter, crt_it, crt_len);
-    ret_iter += crt_len;
+    if (crt_it != NULL) {
+        crt_len = strlen(crt_it);
+        memcpy (ret_iter, crt_it, crt_len);
+        ret_iter += crt_len;
+    }
     va_end (argptr);
     *ret_iter = 0;
 

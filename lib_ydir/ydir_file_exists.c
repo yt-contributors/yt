@@ -43,10 +43,24 @@
 /*  FUNCTIONS    ----------------------------------------------------------- */
 
 /* ------------------------------------------------------------------------- */
-YDIR_EXPORT yt_func_exit_code_t
+YDIR_EXPORT int
 YDIR_IMPLEMENT_ME ydir_file_exists(ydir_t * ydir, const char * path)
 {
-    return YT_FUNC_OK;
+    FILE * f;
+    if (path == NULL) return 0;
+    if (ydir_path_is_relative(path)) {
+        /** @todo */
+
+        return 0;
+    } else {
+        f = fopen (path, "r");
+        if (f != NULL) {
+            fclose (f);
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 }
 /* ========================================================================= */
 

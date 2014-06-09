@@ -31,6 +31,8 @@ extern "C" {
 /*  DEFINITIONS    --------------------------------------------------------- */
 
 struct _ydatetime_t;
+struct timeval;
+struct tm;
 
 //! a logger structure
 ///
@@ -96,6 +98,26 @@ ydatetime_end (
 ///@}
 // == == == == == == == == == == == == == == == == == == == == == ==
 
+
+//! convert a unix timestamp to a timeval structure
+///
+/// Unix timestamp is represented as a double value where integer part
+/// is the number of seconds and fractional part is the fraction of seconds.
+///
+YDATETIME_EXPORT void
+ydatetime_unix_to_timeval (
+        double unix_time,
+        struct timeval * out);
+
+//! convert a unix timestamp to a tm time structure
+///
+/// Unix timestamp is represented as a double value where integer part
+/// is the number of seconds and fractional part is the fraction of seconds.
+///
+YDATETIME_EXPORT void
+ydatetime_unix_to_tm (
+        double unix_time,
+        struct tm * out);
 
 /*  FUNCTIONS    =========================================================== */
 //

@@ -7,6 +7,9 @@
 
   \brief
 
+  Reference:
+
+    - http://paraslash.systemlinux.org/doxygen/html/HTML/S/1053.html
 
 */
 /* ------------------------------------------------------------------------- */
@@ -22,6 +25,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <time.h>
+#include <math.h>
 
 #ifdef YT_SYSLOG_FOUND
 #   include "syslog.h"
@@ -67,6 +71,26 @@ ydatetime_end (ydatetime_t * ydatetime)
     memset (ydatetime, 0, sizeof(ydatetime_t));
 }
 /* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+YDATETIME_EXPORT void
+ydatetime_unix_to_timeval (double unix_time, struct timeval * out)
+{
+    out->tv_sec = trunc (unix_time);
+    out->tv_usec = (unix_time - (double)out->tv_sec) * 1000.0 * 1000.0 + 0.5;
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+YDATETIME_EXPORT void
+ydatetime_unix_to_tm (double unix_time, struct tm * out)
+{
+    time_t t_intermed = trunc (unix_time);
+    gmtime_r (&t_intermed, out);
+}
+/* ========================================================================= */
+
+
 
 /*  FUNCTIONS    =========================================================== */
 //

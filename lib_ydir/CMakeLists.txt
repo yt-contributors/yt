@@ -47,6 +47,7 @@ set ( LIB_SOURCES
     ydir_remove.c
     ydir_set_current.c
     ydir_set_dir.c
+    ydir_symlink.c
 )
 set ( LIB_HEADERS
     ydir.h
