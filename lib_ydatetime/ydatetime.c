@@ -87,6 +87,7 @@ ydatetime_unix_to_tm (double unix_time, struct tm * out)
 {
     time_t t_intermed = trunc (unix_time);
     gmtime_r (&t_intermed, out);
+    out->tm_year += 1900;
 }
 /* ========================================================================= */
 
