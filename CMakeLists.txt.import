@@ -1,39 +1,21 @@
 # ----------------------------------------------------------------------------
 # Introduction
 #
-# The project uses cmake to build its components. This is the main cmake file
-# that should be used like so:
-#     mkdir build && cd build && cmake $OPTIONS ../src && make && make install
+# This file may be used by projects that don't want the full source
+# code inside their tree. One only has to create a yt directory inside,
+# copy and rename this file CMakeLists.txt, then reference
+# from parent directory using:
+#		add_subdirectory("yt")
 #
-# $OPTIONS are a set of definitions of the form `-DDEFINITION=Value`
-# Here are valid definitions:
+# Following files and directories should always be copied:
+#		common
+#		cmake
+#		config.h.in
+#		LICENSE
+#		README.md
 #
-#   -DCMAKE_BUILD_TYPE=Debug
-#   -DCMAKE_BUILD_TYPE=Release
-#       Either enable or disable development aids;
-#
-#   -DCMAKE_INSTALL_PREFIX:PATH=/usr
-#       The base path for installed components;
-#
-#   -DYT_BUILD_TESTS=ON
-#       Activate or deactivate building of embedded google test
-#       suite and internal tests
-#
-#
-# To get the full list of make targets run `make help` in build directory. Here
-# are some important ones:
-#
-#   install
-#       copies installable components to their intended places
-#
-#   doc
-#       creates documentation using Doxygen
-#
-#   internal-test
-#       creates internal test executable based on Google Test suite
-#
-# Dependencies:
-#
+# Individual modules can be copied inside yt directory and added
+# as dependencies for your targets.
 #
 # ============================================================================
 
@@ -42,20 +24,22 @@
 # prepare
 
 cmake_minimum_required(VERSION 2.8.9)
-set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
 include(YtCommonInit)
 include(YtCommonPostInit)
+include(YtSubdirList)
 # ============================================================================
 
 
 # ----------------------------------------------------------------------------
 # customisation
 
-set ( PROJECT_NAME "yt" )
+# we want yt include files to go inside parent project's include directory, yt subdir
+set ( INCLUDE_OUTPUT_PATH_PRESERVE
+    "${PROJECT_BINARY_DIR}/build/include/${PROJECT_NAME}" )
 
-option(YT_BUILD_TESTS "Activate or deactivate building of embedded google test suite and internal tests"
-         OFF)
+set (PROJECT_NAME "yt")
 
 # ============================================================================
 
@@ -64,6 +48,8 @@ option(YT_BUILD_TESTS "Activate or deactivate building of embedded google test s
 # prepare the cmake system with some common settings
 
 YtCommonInit()
+set (INCLUDE_OUTPUT_PATH "${INCLUDE_OUTPUT_PATH_PRESERVE}/yt")
+include_directories(${INCLUDE_OUTPUT_PATH_PRESERVE})
 
 if   (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set ( YT_DEBUG ON )
@@ -87,47 +73,9 @@ set (YT_SYSLOG_FOUND SYSLOG_FOUND)
 # subdirectories
 
 add_subdirectory("common")
-
-
-set (Y_LIB_LIST
-    ylogger
-    ybitarray
-    ybytearray
-    ydatetime
-    ydir
-    yfile
-    yhash
-    yline
-    ylinef
-    ylinkedlist
-    ylist
-    ymap
-    ymargins
-    ymarginsf
-    ymutex
-    yobject
-    ypair
-    ypoint
-    ypointf
-    yqueue
-    yrect
-    yrectf
-    yset
-    ysize
-    ysizef
-    ystack
-    ystring
-    ystringlist
-    yurl
-    yutf8
-    yuuid
-    yvariant
-    yvector
-    ymem
-)
-
+YT_SUBDIRLISTPTRN(Y_LIB_LIST ${CMAKE_CURRENT_SOURCE_DIR} "lib_y*")
 FOREACH(iterlib ${Y_LIB_LIST})
-    ADD_SUBDIRECTORY("lib_${iterlib}")
+    ADD_SUBDIRECTORY("${iterlib}")
 ENDFOREACH()
 
 # ============================================================================
@@ -135,11 +83,6 @@ ENDFOREACH()
 
 # ----------------------------------------------------------------------------
 # other cmake system common settings
-
-# the list of libraries to be linked with test executable
-set (test_libraries
-    ${Y_LIB_LIST}
-)
 
 YtCommonPostInit()
 

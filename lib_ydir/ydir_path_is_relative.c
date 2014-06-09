@@ -21,6 +21,9 @@
 
 #include <string.h>
 
+
+
+
 /*  INCLUDES    ============================================================ */
 //
 //
@@ -44,8 +47,18 @@
 
 /* ------------------------------------------------------------------------- */
 YDIR_EXPORT int
-YDIR_IMPLEMENT_ME ydir_path_is_relative(const char * path)
+YDIR_IMPLEMENT_ME ydir_path_is_relative (const char * path)
 {
+    if (path == NULL) return 0;
+    if (path[0] == 0) return 0;
+
+#if TARGET_SYSTEM_WIN32
+    if (path[1] == ':') return 1;
+    if ((path[0] == '\\') && (path[1] == '\\')) return 1;
+#else
+    if (path[0] == '/') return 1;
+#endif
+    return 0;
     return YT_FUNC_OK;
 }
 /* ========================================================================= */

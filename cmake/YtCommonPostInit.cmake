@@ -1,4 +1,4 @@
-macro(CommonPostInit )
+macro(YtCommonPostInit )
 
 
 # ----------------------------------------------------------------------------
@@ -6,14 +6,14 @@ macro(CommonPostInit )
 # to the source code
 configure_file (
     "${PROJECT_SOURCE_DIR}/config.h.in"
-    "${PROJECT_BINARY_DIR}/build/include/${PROJECT_NAME}/config.h"
+    "${INCLUDE_OUTPUT_PATH}/config.h"
 )
 # ============================================================================
 
 
 # ----------------------------------------------------------------------------
 # internal tests
-if (BUILD_TESTS)
+if (YT_BUILD_TESTS)
     add_subdirectory( "googletest" )
     include_directories(googletest/include)
 
@@ -32,28 +32,30 @@ if (BUILD_TESTS)
             PROPERTIES COMPILE_DEFINITIONS "${props}"
         )
     endif (modules_testing_src)
-endif (BUILD_TESTS)
+endif (YT_BUILD_TESTS)
 # ============================================================================
 
 
 # ----------------------------------------------------------------------------
 # documentation
-find_package(Doxygen)
+if(EXISTS "${PROJECT_SOURCE_DIR}/Doxyfile.in")
 
-configure_file (
-    "${PROJECT_SOURCE_DIR}/Doxyfile.in"
-    "${PROJECT_BINARY_DIR}/Doxyfile"
-    @ONLY
-)
+	find_package(Doxygen)
 
-if(DOXYGEN_FOUND)
-    add_custom_target(doc
-        ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        COMMENT "Generating API documentation with Doxygen" VERBATIM
-    )
-endif(DOXYGEN_FOUND)
+	configure_file (
+		"${PROJECT_SOURCE_DIR}/Doxyfile.in"
+		"${PROJECT_BINARY_DIR}/Doxyfile"
+		@ONLY
+	)
 
+	if(DOXYGEN_FOUND)
+		add_custom_target(doc
+			${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+			COMMENT "Generating API documentation with Doxygen" VERBATIM
+		)
+	endif(DOXYGEN_FOUND)
+endif(EXISTS "${PROJECT_SOURCE_DIR}/Doxyfile.in")
 # ============================================================================
 
 

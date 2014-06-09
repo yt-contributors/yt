@@ -1,0 +1,15 @@
+set (GRAPHVIZ_GRAPH_TYPE "digraph")
+set (GRAPHVIZ_GRAPH_NAME "GG")
+set (GRAPHVIZ_GRAPH_HEADER "node [\n fontsize = \"12\"\n];")
+set (GRAPHVIZ_NODE_PREFIX "node")
+
+set (GRAPHVIZ_EXECUTABLES OFF)
+set (GRAPHVIZ_STATIC_LIBS ON)
+set (GRAPHVIZ_SHARED_LIBS ON)
+set (GRAPHVIZ_MODULE_LIBS ON)
+set (GRAPHVIZ_EXTERNAL_LIBS OFF)
+set (GRAPHVIZ_IGNORE_TARGETS 
+  "common"
+  "googletest"
+  ".*test.*"
+)

@@ -1,7 +1,7 @@
 include(CheckFunctionExists)
 
 
-macro(CommonInit )
+macro(YtCommonInit )
 
 # ----------------------------------------------------------------------------
 # definitions related to the project

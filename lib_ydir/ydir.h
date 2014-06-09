@@ -97,7 +97,7 @@ ydir_set_dir (
 //! append new path to current path
 ///
 /// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absoute path
+/// to compute an absolute path
 ///
 YDIR_EXPORT yt_func_exit_code_t
 ydir_cd (
@@ -107,7 +107,7 @@ ydir_cd (
 //! tell if there is a file at the orther end of the path
 ///
 /// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absoute path
+/// to compute an absolute path
 ///
 YDIR_EXPORT yt_func_exit_code_t
 ydir_file_exists (
@@ -117,18 +117,29 @@ ydir_file_exists (
 //! tell if there is a file at the orther end of the path
 ///
 /// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absoute path
+/// to compute an absolute path
 ///
-YDIR_EXPORT yt_func_exit_code_t
+YDIR_EXPORT int
 ydir_dir_exists (
         struct _ydir_t * ydir,
         const char * path);
 
+
 //! tell if the path is absolute or relative
+///
+/// For windows machines paths where second character is ':' and
+/// those that start with '//' are absolute.
+///
+/// For posix machines paths that start with a '/' are absolute.
+///
+/// NULL and zero-length strings result in absolute paths.
+///
+/// @return 0 for absolute paths, 1 for relative paths
 ///
 YDIR_EXPORT int
 ydir_path_is_relative (
         const char * path);
+
 
 //! tell if this structure represents the root directory
 ///
@@ -150,7 +161,7 @@ ydir_i_exist (
 /// of the path except last one does not exists.
 ///
 /// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absoute path
+/// to compute an absolute path
 ///
 YDIR_EXPORT yt_func_exit_code_t
 ydir_mkdir (
@@ -160,7 +171,7 @@ ydir_mkdir (
 //! create a sub-directory; fails if it already exists
 ///
 /// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absoute path
+/// to compute an absolute path
 ///
 YDIR_EXPORT yt_func_exit_code_t
 ydir_mkpath (
@@ -177,7 +188,7 @@ ydir_relative (
 //! removes the sub-directory or the file
 ///
 /// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absoute path
+/// to compute an absolute path
 ///
 YDIR_EXPORT yt_func_exit_code_t
 ydir_remove (
@@ -187,7 +198,7 @@ ydir_remove (
 //! removes the sub-directory;
 ///
 /// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absoute path
+/// to compute an absolute path
 ///
 YDIR_EXPORT yt_func_exit_code_t
 ydir_remove_dir (
@@ -197,7 +208,7 @@ ydir_remove_dir (
 //! removes the file;
 ///
 /// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absoute path
+/// to compute an absolute path
 ///
 YDIR_EXPORT yt_func_exit_code_t
 ydir_remove_file (
@@ -207,7 +218,7 @@ ydir_remove_file (
 //! copies our directory (and all its content) to a different location
 ///
 /// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absoute path
+/// to compute an absolute path
 ///
 YDIR_EXPORT yt_func_exit_code_t
 ydir_copy (
@@ -219,7 +230,7 @@ ydir_copy (
 /// Internal path IS NOT change to new location; use ydir_cd() for that.
 ///
 /// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absoute path
+/// to compute an absolute path
 ///
 YDIR_EXPORT yt_func_exit_code_t
 ydir_move (
@@ -267,17 +278,27 @@ ydir_foreach_file (
 //! sets current directory for the application
 ///
 /// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absoute path
+/// to compute an absolute path
 ///
 YDIR_EXPORT yt_func_exit_code_t
 ydir_set_current (
         struct _ydir_t * ydir,
         const char * path);
 
+//! tell if the item exists and is a directory or something else
+///
+/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
+/// to compute an absolute path.
+///
+YDIR_EXPORT int
+ydir_is_directory(
+        struct _ydir_t * ydir,
+        const char * path);
+
 //! tell if the item (file or directory) exists and is readable by this process
 ///
 /// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absoute path
+/// to compute an absolute path
 ///
 YDIR_EXPORT int
 ydir_is_readable(
@@ -287,7 +308,7 @@ ydir_is_readable(
 //! tell if the item (file or directory) exists and is writable by this process
 ///
 /// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absoute path
+/// to compute an absolute path
 ///
 YDIR_EXPORT int
 ydir_is_writable(
@@ -297,7 +318,7 @@ ydir_is_writable(
 //! tell if the item (file or directory) exists and is executable by this process
 ///
 /// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absoute path
+/// to compute an absolute path
 ///
 YDIR_EXPORT int
 ydir_is_executable(

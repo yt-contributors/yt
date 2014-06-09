@@ -2,7 +2,7 @@
 # prepare
 
 cmake_minimum_required(VERSION 2.8.8)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 # ============================================================================
 
 # ----------------------------------------------------------------------------
@@ -32,6 +32,7 @@ set ( LIB_SOURCES
     ydir_i_exist.c
     ydir_init_dir.c
     ydir_init.c
+    ydir_is_directory.c
     ydir_is_executable.c
     ydir_is_readable.c
     ydir_is_root.c
@@ -51,7 +52,8 @@ set ( LIB_HEADERS
     ydir.h
 )
 set (LIBS
-    "ymem_malloc"
+    "ylogger"
+    "ymem"
 )
 
 add_library( ${LOC_PRJ_NAME}

@@ -21,6 +21,13 @@
 
 #include <string.h>
 
+#if TARGET_SYSTEM_WIN32
+
+#else
+#   include <sys/stat.h>
+#   include <sys/types.h>
+#endif
+
 /*  INCLUDES    ============================================================ */
 //
 //
@@ -46,7 +53,34 @@
 YDIR_EXPORT yt_func_exit_code_t
 YDIR_IMPLEMENT_ME ydir_mkdir(ydir_t * ydir, const char * path)
 {
-    return YT_FUNC_OK;
+    int relative = ydir_path_is_relative (path);
+
+    yt_func_start;
+
+    if (relative) {
+        /** @todo compute absolute path */
+
+    } else {
+#if TARGET_SYSTEM_WIN32
+    /** @todo TARGET_SYSTEM_WIN32 */
+
+
+#else
+        struct stat st;
+        if (stat (path, &st) == 0) {
+            if (!S_ISDIR(st.st_mode)) {
+                exitcode = YT_FUNC_BAD_INPUT;
+            }
+            break;
+        } else {
+            if (0 != mkdir (path, 0777)) {
+                exitcode = YT_FUNC_GENERIC_ERROR;
+            }
+        }
+#endif
+    }
+    yt_func_end;
+    yt_func_ret;
 }
 /* ========================================================================= */
 

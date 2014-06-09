@@ -2,7 +2,7 @@
 # prepare
 
 cmake_minimum_required(VERSION 2.8.8)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 # ============================================================================
 
 # ----------------------------------------------------------------------------
@@ -25,7 +25,7 @@ set ( LIB_SOURCES
 set ( LIB_HEADERS
     yfile.h
 )
-set (LIBS)
+set (LIBS "ylogger")
 
 
 add_library( ${LOC_PRJ_NAME}
