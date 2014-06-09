@@ -62,6 +62,7 @@ YDIR_IMPLEMENT_ME ydir_mkpath(ydir_t * ydir, const char * path)
     // see if we're doing a relative path
     int relative = ydir_path_is_relative (path);
     char * local_path = NULL;
+    char * prev_end = NULL;
 
     yt_func_start;
 
@@ -95,23 +96,26 @@ YDIR_IMPLEMENT_ME ydir_mkpath(ydir_t * ydir, const char * path)
                 ++p_iter;
                 continue;
             }
+            if ((p_iter-prev_end) != 1) {
 
-            // we have a path separator
-            if (stat (local_path, &st) == 0) {
-                // exists but is not directory => error
-                if (!S_ISDIR(st.st_mode)) {
-                    exitcode = YT_FUNC_BAD_INPUT;
-                }
-                break;
-            } else {
-                if (0 != mkdir (local_path, 0777)) {
-                    exitcode = YT_FUNC_GENERIC_ERROR;
-                    break;
+                // we have a path separator
+                if (stat (local_path, &st) == 0) {
+                    // exists but is not directory => error
+                    if (!S_ISDIR(st.st_mode)) {
+                        exitcode = YT_FUNC_BAD_INPUT;
+                        break;
+                    }
+                } else {
+                    if (0 != mkdir (local_path, 0777)) {
+                        exitcode = YT_FUNC_GENERIC_ERROR;
+                        break;
+                    }
                 }
             }
 
             // done?
             if (end_of_loop) break;
+            prev_end = p_iter;
             *p_iter = '/';
             ++p_iter;
         }
