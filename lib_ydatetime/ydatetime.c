@@ -26,6 +26,7 @@
 #include <stdarg.h>
 #include <time.h>
 #include <math.h>
+#include <stdio.h>
 
 #ifdef YT_SYSLOG_FOUND
 #   include "syslog.h"
@@ -86,7 +87,11 @@ YDATETIME_EXPORT void
 ydatetime_unix_to_tm (double unix_time, struct tm * out)
 {
     time_t t_intermed = trunc (unix_time);
+#ifdef TARGET_SYSTEM_WIN32
+    gmtime_s(out, &t_intermed);
+#else
     gmtime_r (&t_intermed, out);
+#endif
     out->tm_year += 1900;
 }
 /* ========================================================================= */

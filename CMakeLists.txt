@@ -41,7 +41,7 @@
 # ----------------------------------------------------------------------------
 # prepare
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 2.8.11)
 set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 include(YtCommonInit)
@@ -78,7 +78,7 @@ endif (CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 find_package(Syslog)
 include_directories(${SYSLOG_INCLUDE_DIRS})
-set (YT_SYSLOG_FOUND SYSLOG_FOUND)
+set (YT_SYSLOG_FOUND ${SYSLOG_FOUND})
 
 # ============================================================================
 

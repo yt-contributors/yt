@@ -21,7 +21,7 @@
 
 #include <string.h>
 
-#if TARGET_SYSTEM_WIN32
+#ifdef TARGET_SYSTEM_WIN32
 
 #else
 #   include <sys/stat.h>
@@ -55,7 +55,7 @@ YDIR_IMPLEMENT_ME ydir_is_directory (ydir_t * ydir, const char * path)
     // no path does not exists
     if (path == NULL) return 0;
 
-#if TARGET_SYSTEM_WIN32
+#ifdef TARGET_SYSTEM_WIN32
     /** @todo TARGET_SYSTEM_WIN32 */
 
 #else

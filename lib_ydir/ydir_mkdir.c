@@ -21,7 +21,7 @@
 
 #include <string.h>
 
-#if TARGET_SYSTEM_WIN32
+#ifdef TARGET_SYSTEM_WIN32
 
 #else
 #   include <sys/stat.h>
@@ -61,7 +61,7 @@ YDIR_IMPLEMENT_ME ydir_mkdir(ydir_t * ydir, const char * path)
         /** @todo compute absolute path */
 
     } else {
-#if TARGET_SYSTEM_WIN32
+#ifdef TARGET_SYSTEM_WIN32
     /** @todo TARGET_SYSTEM_WIN32 */
 
 

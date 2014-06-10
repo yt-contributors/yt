@@ -62,7 +62,7 @@ YDIR_IMPLEMENT_ME ydir_symlink(
     int src_rel = ydir_path_is_relative (path_src);
     int dest_rel = ydir_path_is_relative (path_dest);
 
-#if TARGET_SYSTEM_WIN32
+#ifdef TARGET_SYSTEM_WIN32
     /** @todo TARGET_SYSTEM_WIN32 */
 
 #else

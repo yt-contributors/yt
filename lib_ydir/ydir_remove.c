@@ -57,7 +57,7 @@ YDIR_IMPLEMENT_ME ydir_remove (ydir_t * ydir, const char * path)
     if ( ydir_path_is_relative(path) ) {
 
     } else {
-#if TARGET_SYSTEM_WIN32
+#ifdef TARGET_SYSTEM_WIN32
         /** @todo TARGET_SYSTEM_WIN32 */
 #else
         if (0 != remove (path)) {

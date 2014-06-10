@@ -52,7 +52,7 @@ YDIR_IMPLEMENT_ME ydir_path_is_relative (const char * path)
     if (path == NULL) return 0;
     if (path[0] == 0) return 0;
 
-#if TARGET_SYSTEM_WIN32
+#ifdef TARGET_SYSTEM_WIN32
     if (path[1] == ':') return 0;
     if ((path[0] == '\\') && (path[1] == '\\')) return 0;
 #else
