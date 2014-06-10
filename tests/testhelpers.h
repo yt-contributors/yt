@@ -17,6 +17,11 @@
 //
 /*  DEFINITIONS    --------------------------------------------------------- */
 
+#define EXPECT_NULL(__p__) EXPECT_TRUE(__p__ == NULL)
+#define EXPECT_NNULL(__p__) EXPECT_FALSE(__p__ == NULL)
+#define EXPECT_OK(__x__) EXPECT_EQ(__x__, YT_FUNC_OK)
+
+
 /*  DEFINITIONS    ========================================================= */
 //
 //

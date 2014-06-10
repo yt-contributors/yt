@@ -19,6 +19,7 @@
 
 #include <yt/yt.h>
 #include <stdlib.h>
+#include <string.h>
 #include <yt/ylogger.h>
 
 #ifdef __cplusplus
@@ -136,6 +137,19 @@ ymem_free (
         void * ptr)
 {
     free (ptr);
+}
+
+//!
+///
+/// Free memory.
+///
+static inline char *
+ymem_strdup (
+        const char * ptr)
+{
+    char * ret = strdup (ptr);
+    if (ret == NULL) err_message ("Memory allocation error in ymem_strdup");
+    return ret;
 }
 
 ///@}

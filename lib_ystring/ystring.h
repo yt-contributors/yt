@@ -32,12 +32,18 @@ extern "C" {
 
 struct _ystring_t;
 
+typedef enum _ystring_flags_t {
+    YSTRING_NONE = 0x0000, /**< no flag is set */
+    YSTRING_COPY_ON_WRITE = 0x0001 /**< the buffer is */
+} ystring_flags_t;
+
 //! a logger structure
 ///
 typedef struct _ystring_t {
-    const char * buffer_;   /**< our buffer */
-    size_t bytes_used_;     /**< length of the string in bytes */
+    const char * buffer_;   /**< our buffer as a ycntbuff_t buffer */
+    size_t bytes_used_;     /**< length of the string in bytes, including ending null */
     size_t bytes_alloc_;    /**< length of the buffer in bytes */
+    int flags_;
 } ystring_t;
 
 
@@ -45,24 +51,6 @@ typedef struct _ystring_t {
 /// @{
 #ifndef YSTRING_EXPORT
 #define YSTRING_EXPORT
-#endif
-/// @}
-
-
-//! not yet implemented
-/// @{
-#ifndef YSTRING_IMPLEMENT_ME
-#define YSTRING_IMPLEMENT_ME
-#endif
-/// @}
-
-
-//! simple functions are outside the namespace by default
-/// @{
-#ifdef YSTRING_WRAP_ALL
-#define YSTRING_WRAP(__name__) ystring_ ## __name__
-#else
-#define YSTRING_WRAP(__name__) __name__
 #endif
 /// @}
 
@@ -110,12 +98,15 @@ ystring_end (
 /// Prepares the structure; initializes the string with an
 /// initial value.
 ///
+/// Usually you do not need this function. Simply use ystring_init()
+/// to an automatic variable.
+///
 YSTRING_EXPORT yt_func_exit_code_t
 ystring_new (
         struct _ystring_t ** ystring,
         const char * value);
 
-//! releases the memory
+//! releases the memory allocated for this string using ystring_new()
 ///
 YSTRING_EXPORT void
 ystring_free (

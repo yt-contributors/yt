@@ -83,6 +83,14 @@ typedef enum _yt_func_exit_code_t {
     __res__  = __func__; \
     if (__res__ == NULL) { exitcode = YT_FUNC_MEMORY_ERROR; break; }
 
+//! calls the function, assigns the result and checks if YT_FUNC_OK was returned
+///
+#define yt_func_ok(__func__) \
+    exitcode  = __func__; \
+    if (__res__ != YT_FUNC_OK) break;
+
+
+
 /*  DEFINITIONS    ========================================================= */
 //
 //

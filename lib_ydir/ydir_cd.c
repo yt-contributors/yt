@@ -63,6 +63,7 @@ YDIR_IMPLEMENT_ME ydir_cd (ydir_t * ydir, const char * path)
 
     } else {
         yt_func_null(ydir->internal_path_, ymem_strdup(path));
+
     }
     if (old_value != NULL) ymem_free(old_value);
 

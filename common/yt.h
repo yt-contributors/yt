@@ -4,7 +4,7 @@
   \file			yt.h
   \date			June 2014
   \author		TNick
-  
+
 *//*
 
 
@@ -60,16 +60,26 @@ extern "C" {
 #endif
 
 
+//! debug break point
+#ifdef YT_DEBUG
+#   define YT_BREAKPOINT  asm volatile ("int3;");
+#else
+#   define YT_BREAKPOINT
+#endif
+
+
 //! our assert
-#ifdef _DEBUG
+#ifdef YT_DEBUG
 #  define DBG_ASSERT(a) \
     if (!(a)) {\
         printf("\nDBG_ASSERT Failed: " STRINGIFY(a) "\n"); \
         printf("%s[%d]: %s\n\n",__FILE__, __LINE__, __func__); \
+        YT_BREAKPOINT; \
     }
 #else
 #  define DBG_ASSERT(a)
 #endif
+
 
 /*  DEFINITIONS    ========================================================= */
 //

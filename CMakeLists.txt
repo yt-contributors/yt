@@ -124,6 +124,7 @@ set (Y_LIB_LIST
     yvariant
     yvector
     ymem
+    ycntbuff
 )
 
 FOREACH(iterlib ${Y_LIB_LIST})
