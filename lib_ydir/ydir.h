@@ -96,8 +96,11 @@ ydir_set_dir (
 
 //! append new path to current path
 ///
-/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
+/// If the \b path is relative (ydir_path_is_relative() returns 1) internal path is used
 /// to compute an absolute path
+///
+/// If \b ydir is NULL YT_FUNC_BAD_INPUT is returned.
+/// if \b path is NULL that value is saved and YT_FUNC_OK is returned.
 ///
 YDIR_EXPORT yt_func_exit_code_t
 ydir_cd (

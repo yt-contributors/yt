@@ -35,9 +35,9 @@ struct _ystring_t;
 //! a logger structure
 ///
 typedef struct _ystring_t {
-
-    const char * app_name_;     /**< the reported name of the application */
-
+    const char * buffer_;   /**< our buffer */
+    size_t bytes_used_;     /**< length of the string in bytes */
+    size_t bytes_alloc_;    /**< length of the buffer in bytes */
 } ystring_t;
 
 
@@ -91,18 +91,36 @@ typedef struct _ystring_t {
 
 //! initialize
 ///
-/// Provides the structure with default callbacks.
+/// Prepares the structure; initializes the string with an
+/// initial value.
 ///
 YSTRING_EXPORT yt_func_exit_code_t
 ystring_init (
         struct _ystring_t * ystring,
-        const char * app_name);
+        const char * value);
 
 //! terminate
 ///
 YSTRING_EXPORT void
 ystring_end (
         struct _ystring_t * ystring);
+
+//! allocate a new string
+///
+/// Prepares the structure; initializes the string with an
+/// initial value.
+///
+YSTRING_EXPORT yt_func_exit_code_t
+ystring_new (
+        struct _ystring_t ** ystring,
+        const char * value);
+
+//! releases the memory
+///
+YSTRING_EXPORT void
+ystring_free (
+        struct _ystring_t ** ystring);
+
 
 ///@}
 // == == == == == == == == == == == == == == == == == == == == == ==

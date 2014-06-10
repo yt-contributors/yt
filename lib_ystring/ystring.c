@@ -18,6 +18,7 @@
 /*  INCLUDES    ------------------------------------------------------------ */
 
 #include "ystring.h"
+#include <yt/ymem.h>
 
 #include <string.h>
 #include <stdarg.h>
@@ -51,7 +52,7 @@
 
 /* ------------------------------------------------------------------------- */
 YSTRING_EXPORT yt_func_exit_code_t
-ystring_init (ystring_t * ystring, const char * app_name)
+ystring_init (ystring_t * ystring, const char * value)
 {
     yt_func_start;
 
@@ -68,6 +69,29 @@ YSTRING_EXPORT void
 ystring_end (ystring_t * ystring)
 {
     memset (ystring, 0, sizeof(ystring_t));
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+YSTRING_EXPORT yt_func_exit_code_t
+ystring_new (ystring_t ** ystring, const char * value)
+{
+    ystring_t * ret = NULL;
+    yt_func_start;
+    yt_func_null(ret, ymem_malloc (sizeof(ystring_t)));
+    exitcode = ystring_init (ret, value);
+    yt_func_end;
+    *ystring = ret;
+    yt_func_ret;
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+YSTRING_EXPORT void
+ystring_free (ystring_t ** ystring)
+{
+    ystring_t * ret = *ystring;
+    if (ret == NULL)
 }
 /* ========================================================================= */
 
