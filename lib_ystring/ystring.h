@@ -76,7 +76,6 @@ typedef struct _ystring_t {
  */
 ///@{
 
-
 //! initialize a structure from an utf8, null terminated string
 ///
 /// Prepares the structure; initializes the string with an
@@ -86,6 +85,21 @@ YSTRING_EXPORT yt_func_exit_code_t
 ystring_init (
         struct _ystring_t * ystring,
         const char * value);
+
+//! initialize a structure from a counted string
+///
+/// Prepares the structure; initializes the string with an
+/// initial value.
+///
+YSTRING_EXPORT yt_func_exit_code_t
+ystring_init_counted (
+        struct _ystring_t * ystring,
+        const char * value,
+        size_t value_len);
+
+//! initialize an empty structure
+///
+#define ystring_init_empty(__addr__) ystring_init((__addr__), NULL)
 
 //! initialize a structure from another structure
 ///
@@ -122,6 +136,13 @@ YSTRING_EXPORT void
 ystring_free (
         struct _ystring_t ** ystring);
 
+
+//! make sure that internal buffer is at least that long
+///
+YSTRING_EXPORT yt_func_exit_code_t
+ystring_reserve (
+        struct _ystring_t * ystring,
+        size_t new_len);
 
 ///@}
 // == == == == == == == == == == == == == == == == == == == == == ==

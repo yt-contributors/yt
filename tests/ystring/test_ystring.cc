@@ -53,6 +53,20 @@ TEST(ystring,generic){
     ystring_end (&str1);
 
 }
+
+/* ------------------------------------------------------------------------- */
+TEST(ystring,ystring_init_counted){
+
+    yt_func_exit_code_t exitcode;
+    ystring_t str1;
+
+    exitcode = ystring_init_counted (&str1, "test string", 4);
+    EXPECT_OK(exitcode);
+    EXPECT_FALSE(ystring_is_null (&str1));
+    EXPECT_FALSE(ystring_is_empty (&str1));
+    EXPECT_EQ(ystring_len (&str1), strlen ("test"));
+    ystring_end (&str1);
+}
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */

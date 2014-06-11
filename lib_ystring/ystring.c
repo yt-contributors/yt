@@ -137,6 +137,41 @@ ystring_init (ystring_t * ystring, const char * value)
 
 /* ------------------------------------------------------------------------- */
 YSTRING_EXPORT yt_func_exit_code_t
+ystring_init_counted (
+        ystring_t * ystring, const char * value, size_t value_len)
+
+{
+    yt_func_start;
+
+    // clear the structure to 0
+    memset (ystring, 0, sizeof(ystring_t));
+    if (value == NULL) break;
+    if (value_len == 0) break;
+
+    // see how long is the string (in bytes) and decide a buffer size
+    size_t actual_len = value_len+1;
+    size_t allocated_len = ystring_alloc_size (actual_len);
+
+    // allocate this much and copy; save sizes
+    yt_func_ok (ycntbuff_new (
+                    (void**)&ystring->buffer_,
+                    ystring, allocated_len));
+
+    // copy it and null-terminate
+    char * tmp = (char*)ystring->buffer_;
+    memcpy (tmp, value, value_len);
+    tmp[value_len] = 0;
+
+    ystring->bytes_alloc_ = allocated_len;
+    ystring->bytes_used_ = actual_len;
+
+    yt_func_end;
+    yt_func_ret;
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+YSTRING_EXPORT yt_func_exit_code_t
 ystring_init_c (ystring_t * ystring, ystring_t * ystring_source)
 {
     if (ystring == NULL) return YT_FUNC_BAD_INPUT;
@@ -361,7 +396,35 @@ ystring_append (ystring_t * ystring_result, size_t count, ...)
 }
 /* ========================================================================= */
 
-
+/* ------------------------------------------------------------------------- */
+YSTRING_EXPORT yt_func_exit_code_t
+ystring_reserve (ystring_t * ys, size_t new_len)
+{
+    yt_func_start;
+    char * result_buffer = NULL;
+    size_t allocated_len = ystring_alloc_size (new_len);
+    if (ystring_is_null (ys)) {
+        yt_func_ok (ycntbuff_new (
+                        (void**)&result_buffer,
+                        ys, new_len));
+        ys->buffer_ = result_buffer;
+        ys->bytes_alloc_ = allocated_len;
+        break;
+    } else if (!ystring_is_shared (ys)) {
+        if (ys->bytes_alloc_ > allocated_len) break;
+    }
+    yt_func_ok (ycntbuff_new (
+                    (void**)&result_buffer,
+                    ys, allocated_len));
+    memcpy (result_buffer, ys->buffer_, ys->bytes_used_);
+    ycntbuff_dec ((void**)&ys->buffer_, ys);
+    ys->buffer_ = result_buffer;
+    ys->bytes_alloc_ = allocated_len;
+    ys->flags_ &= (~YSTRING_COPY_ON_WRITE);
+    yt_func_end;
+    yt_func_ret;
+}
+/* ========================================================================= */
 
 /*  FUNCTIONS    =========================================================== */
 //
