@@ -80,6 +80,19 @@ extern "C" {
 #  define DBG_ASSERT(a)
 #endif
 
+//! assert and return
+#ifdef YT_DEBUG
+#  define DBG_ASSERT_RET(a) \
+    if (!(a)) {\
+        printf("\nDBG_ASSERT Failed: " STRINGIFY(a) "\n"); \
+        printf("%s[%d]: %s\n\n",__FILE__, __LINE__, __func__); \
+        YT_BREAKPOINT; \
+        return; \
+    }
+#else
+#  define DBG_ASSERT_RET(a) if (!(a)) return;
+#endif
+
 
 /*  DEFINITIONS    ========================================================= */
 //

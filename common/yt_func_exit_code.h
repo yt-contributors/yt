@@ -87,7 +87,7 @@ typedef enum _yt_func_exit_code_t {
 ///
 #define yt_func_ok(__func__) \
     exitcode  = __func__; \
-    if (__res__ != YT_FUNC_OK) break;
+    if (exitcode != YT_FUNC_OK) break;
 
 
 
