@@ -18,6 +18,7 @@
 /*  INCLUDES    ------------------------------------------------------------ */
 
 #include <yt/yt.h>
+#include <yt/ystring.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,9 +34,8 @@ extern "C" {
 //! a directory
 ///
 typedef struct _ydir_t {
-
-    char * internal_path_;
-
+    ystring_t path_;
+#   define internal_path_    path_.buffer_
 } ydir_t;
 
 #ifdef TARGET_SYSTEM_WIN32
@@ -68,6 +68,12 @@ typedef struct _ydir_t {
 //
 /*  FUNCTIONS    ----------------------------------------------------------- */
 
+// == == == == == == == == == == == == == == == == == == == == == ==
+/** @name Base
+ *  Constructors, destructors and so on
+ */
+///@{
+
 //! initialize
 ///
 YDIR_EXPORT yt_func_exit_code_t
@@ -86,6 +92,16 @@ ydir_init_dir (
 YDIR_EXPORT void
 ydir_end (
         struct _ydir_t * ydir);
+
+///@}
+// == == == == == == == == == == == == == == == == == == == == == ==
+
+
+// == == == == == == == == == == == == == == == == == == == == == ==
+/** @name change the directory
+ * Here are functions to alter the content.
+ */
+///@{
 
 //! set internal path; must be an absolute path
 ///
@@ -106,6 +122,22 @@ YDIR_EXPORT yt_func_exit_code_t
 ydir_cd (
         struct _ydir_t * ydir,
         const char * path);
+
+///@}
+// == == == == == == == == == == == == == == == == == == == == == ==
+
+
+// == == == == == == == == == == == == == == == == == == == == == ==
+/** @name Basic querries
+ * We're checking for all sorts of stuff here
+ */
+///@{
+
+//! the path separator
+///
+static inline char
+ydir_path_separator ()
+{ return YDIR_PATH_SEP_C; }
 
 //! tell if there is a file at the orther end of the path
 ///
@@ -158,146 +190,6 @@ YDIR_EXPORT int
 ydir_i_exist (
         const char * path);
 
-//! create a sub-directory
-///
-/// Fails if the directory already exists. Also fails if any component
-/// of the path except last one does not exists.
-///
-/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absolute path
-///
-YDIR_EXPORT yt_func_exit_code_t
-ydir_mkdir (
-        struct _ydir_t * ydir,
-        const char * path);
-
-//! create a sub-directory; fails if it already exists
-///
-/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absolute path
-///
-YDIR_EXPORT yt_func_exit_code_t
-ydir_mkpath (
-        struct _ydir_t * ydir,
-        const char * path);
-
-//! create a symbolic link
-///
-/// If the any path is relative (ydir_path_is_relative() returns 1)
-/// internal path is used to compute an absolute path.
-///
-YDIR_EXPORT yt_func_exit_code_t
-ydir_symlink (
-        struct _ydir_t * ydir,
-        const char * path_src,
-        const char * path_dest);
-
-//! compute the path relative to our directory
-///
-YDIR_EXPORT yt_func_exit_code_t
-ydir_relative (
-        struct _ydir_t * ydir,
-        const char * absolute_path);
-
-//! removes the sub-directory or the file
-///
-/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absolute path
-///
-YDIR_EXPORT yt_func_exit_code_t
-ydir_remove (
-        struct _ydir_t * ydir,
-        const char * path);
-
-//! removes the sub-directory;
-///
-/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absolute path
-///
-YDIR_EXPORT yt_func_exit_code_t
-ydir_remove_dir (
-        struct _ydir_t * ydir,
-        const char * path);
-
-//! removes the file;
-///
-/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absolute path
-///
-YDIR_EXPORT yt_func_exit_code_t
-ydir_remove_file (
-        struct _ydir_t * ydir,
-        const char * path);
-
-//! copies our directory (and all its content) to a different location
-///
-/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absolute path
-///
-YDIR_EXPORT yt_func_exit_code_t
-ydir_copy (
-        struct _ydir_t * ydir,
-        const char * path);
-
-//! moves our directory (and all its content) to a different location
-///
-/// Internal path IS NOT change to new location; use ydir_cd() for that.
-///
-/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absolute path
-///
-YDIR_EXPORT yt_func_exit_code_t
-ydir_move (
-        struct _ydir_t * ydir,
-        const char * path);
-
-
-//! callback used to iterate in items from a path
-///
-/// @return non-zero to terminate the loop
-///
-typedef int (*ydir_iter_kb) (
-        struct _ydir_t * ydir,
-        const char * absolute_path,
-        int is_file,
-        void * user);
-
-//! calls the callback for each file or directory
-///
-YDIR_EXPORT int
-ydir_foreach (
-        struct _ydir_t * ydir,
-        const char * pattern,
-        ydir_iter_kb kb,
-        void * user);
-
-//! calls the callback for each directory
-///
-YDIR_EXPORT int
-ydir_foreach_dir (
-        struct _ydir_t * ydir,
-        const char * pattern,
-        ydir_iter_kb kb,
-        void * user);
-
-//! calls the callback for each file
-///
-YDIR_EXPORT int
-ydir_foreach_file (
-        struct _ydir_t * ydir,
-        const char * pattern,
-        ydir_iter_kb kb,
-        void * user);
-
-//! sets current directory for the application
-///
-/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
-/// to compute an absolute path
-///
-YDIR_EXPORT yt_func_exit_code_t
-ydir_set_current (
-        struct _ydir_t * ydir,
-        const char * path);
 
 //! tell if the item exists and is a directory or something else
 ///
@@ -339,11 +231,192 @@ ydir_is_executable(
         struct _ydir_t * ydir,
         const char * path);
 
-//! the path separator
+///@}
+// == == == == == == == == == == == == == == == == == == == == == ==
+
+
+// == == == == == == == == == == == == == == == == == == == == == ==
+/** @name Creating things
+ * This includes individual directories, entire paths and so on
+ */
+///@{
+
+//! create a sub-directory
 ///
-static inline char
-ydir_path_separator ()
-{ return YDIR_PATH_SEP_C; }
+/// Fails if the directory already exists. Also fails if any component
+/// of the path except last one does not exists.
+///
+/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
+/// to compute an absolute path
+///
+YDIR_EXPORT yt_func_exit_code_t
+ydir_mkdir (
+        struct _ydir_t * ydir,
+        const char * path);
+
+//! create a sub-directory; fails if it already exists
+///
+/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
+/// to compute an absolute path
+///
+YDIR_EXPORT yt_func_exit_code_t
+ydir_mkpath (
+        struct _ydir_t * ydir,
+        const char * path);
+
+//! create a symbolic link
+///
+/// If the any path is relative (ydir_path_is_relative() returns 1)
+/// internal path is used to compute an absolute path.
+///
+YDIR_EXPORT yt_func_exit_code_t
+ydir_symlink (
+        struct _ydir_t * ydir,
+        const char * path_src,
+        const char * path_dest);
+
+///@}
+// == == == == == == == == == == == == == == == == == == == == == ==
+
+
+// == == == == == == == == == == == == == == == == == == == == == ==
+/** @name Remove things things
+ *
+ */
+///@{
+
+//! removes the sub-directory or the file
+///
+/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
+/// to compute an absolute path
+///
+YDIR_EXPORT yt_func_exit_code_t
+ydir_remove (
+        struct _ydir_t * ydir,
+        const char * path);
+
+//! removes the sub-directory;
+///
+/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
+/// to compute an absolute path
+///
+YDIR_EXPORT yt_func_exit_code_t
+ydir_remove_dir (
+        struct _ydir_t * ydir,
+        const char * path);
+
+//! removes the file;
+///
+/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
+/// to compute an absolute path
+///
+YDIR_EXPORT yt_func_exit_code_t
+ydir_remove_file (
+        struct _ydir_t * ydir,
+        const char * path);
+
+///@}
+// == == == == == == == == == == == == == == == == == == == == == ==
+
+
+// == == == == == == == == == == == == == == == == == == == == == ==
+/** @name Various
+ *
+ */
+///@{
+
+
+//! copies our directory (and all its content) to a different location
+///
+/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
+/// to compute an absolute path
+///
+YDIR_EXPORT yt_func_exit_code_t
+ydir_copy (
+        struct _ydir_t * ydir,
+        const char * path);
+
+//! moves our directory (and all its content) to a different location
+///
+/// Internal path IS NOT change to new location; use ydir_cd() for that.
+///
+/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
+/// to compute an absolute path
+///
+YDIR_EXPORT yt_func_exit_code_t
+ydir_move (
+        struct _ydir_t * ydir,
+        const char * path);
+
+
+//! compute the path relative to our directory
+///
+YDIR_EXPORT yt_func_exit_code_t
+ydir_relative (
+        struct _ydir_t * ydir,
+        const char * absolute_path);
+
+
+//! sets current directory for the application
+///
+/// If the path is relative (ydir_path_is_relative() returns 1) internal path is used
+/// to compute an absolute path
+///
+YDIR_EXPORT yt_func_exit_code_t
+ydir_set_current (
+        struct _ydir_t * ydir,
+        const char * path);
+
+///@}
+// == == == == == == == == == == == == == == == == == == == == == ==
+
+
+// == == == == == == == == == == == == == == == == == == == == == ==
+/** @name Iterators
+ * Client code can iterate in all sorts of items.
+ */
+///@{
+
+//! callback used to iterate in items from a path
+///
+/// @return non-zero to terminate the loop
+///
+typedef int (*ydir_iter_kb) (
+        struct _ydir_t * ydir,
+        const char * absolute_path,
+        int is_file,
+        void * user);
+
+//! calls the callback for each file or directory
+///
+YDIR_EXPORT int
+ydir_foreach (
+        struct _ydir_t * ydir,
+        const char * pattern,
+        ydir_iter_kb kb,
+        void * user);
+
+//! calls the callback for each directory
+///
+YDIR_EXPORT int
+ydir_foreach_dir (
+        struct _ydir_t * ydir,
+        const char * pattern,
+        ydir_iter_kb kb,
+        void * user);
+
+//! calls the callback for each file
+///
+YDIR_EXPORT int
+ydir_foreach_file (
+        struct _ydir_t * ydir,
+        const char * pattern,
+        ydir_iter_kb kb,
+        void * user);
+
+///@}
+// == == == == == == == == == == == == == == == == == == == == == ==
+
 
 /*  FUNCTIONS    =========================================================== */
 //

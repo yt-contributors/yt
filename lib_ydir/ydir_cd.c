@@ -61,6 +61,8 @@ YDIR_IMPLEMENT_ME ydir_cd (ydir_t * ydir, const char * path)
 
     if (ydir_path_is_relative (path)) {
 
+
+
     } else {
         yt_func_null(ydir->internal_path_, ymem_strdup(path));
 

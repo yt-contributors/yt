@@ -9,6 +9,8 @@
 #include "gtest/gtest.h"
 #include "../testhelpers.h"
 
+#include <yt/ydir.h>
+
 /*  INCLUDES    ============================================================ */
 //
 //
@@ -33,7 +35,11 @@
 /* ------------------------------------------------------------------------- */
 TEST(ydir_init_dir,generic){
 
-
+    ydir_t ydir;
+    yt_func_exit_code_t exitcode;
+    exitcode = ydir_init_dir (&ydir, "/a/b/c/d");
+    EXPECT_OK(exitcode);
+    ydir_end (&ydir);
 }
 /* ========================================================================= */
 

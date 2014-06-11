@@ -55,6 +55,7 @@ set ( LIB_HEADERS
 set (LIBS
     "ylogger"
     "ymem"
+    "ystring"
 )
 
 add_library( ${LOC_PRJ_NAME}

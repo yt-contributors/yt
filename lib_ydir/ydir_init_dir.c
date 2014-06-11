@@ -46,7 +46,10 @@
 YDIR_EXPORT yt_func_exit_code_t
 YDIR_IMPLEMENT_ME ydir_init_dir(ydir_t * ydir, const char * dir)
 {
-    return YT_FUNC_OK;
+    if (ydir_path_is_relative (dir)) return YT_FUNC_BAD_INPUT;
+
+    // memset (ydir, 0, sizeof(ydir_t));
+    return ystring_init (&ydir->path_, dir);
 }
 /* ========================================================================= */
 

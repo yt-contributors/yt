@@ -46,8 +46,8 @@
 YDIR_EXPORT yt_func_exit_code_t
 YDIR_IMPLEMENT_ME ydir_init(ydir_t * ydir)
 {
-    memset (ydir, 0, sizeof(ydir_t));
-    return YT_FUNC_OK;
+    // memset (ydir, 0, sizeof(ydir_t));
+    return ystring_init_empty (&ydir->path_);
 }
 /* ========================================================================= */
 
