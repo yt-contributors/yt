@@ -50,11 +50,10 @@
 //
 //
 /*  FUNCTIONS    ----------------------------------------------------------- */
-
-#ifndef HAVE_SNPRINTF
-#   ifdef TARGET_SYSTEM_WIN32
-#       define HAVE_WIN_SNPRINTF
-#   else
+#ifdef TARGET_SYSTEM_WIN32
+#   define HAVE_WIN_SNPRINTF
+#else
+#   ifndef HAVE_SNPRINTF
 #       error "no vsnprintf replacement"
 #   endif
 #endif
@@ -217,11 +216,11 @@ yutf8_sprintf (yutf8_t * out, const char * format, ...)
 
     // compute the length
     va_start (argptr, format);
-#ifdef HAVE_SNPRINTF
+#if defined(HAVE_WIN_SNPRINTF)
+    result_len = _vscprintf (format, argptr) + 1;
+#elif defined(HAVE_SNPRINTF)
     char fake[16]; // don't just use 0
     result_len = vsnprintf (fake, 1, format, argptr) + 1;
-#elif defined(HAVE_WIN_SNPRINTF)
-    result_len = _vscprintf (format, argptr) + 1;
 #endif
     va_end (argptr);
 
@@ -230,10 +229,10 @@ yutf8_sprintf (yutf8_t * out, const char * format, ...)
 
     // do actual printing
     va_start (argptr, format);
-#ifdef HAVE_SNPRINTF
-    vsnprintf (ret, result_len, format, argptr);
-#elif defined(HAVE_WIN_SNPRINTF)
+#if defined(HAVE_WIN_SNPRINTF)
     vsprintf_s (ret, result_len, format, argptr);
+#elif defined(HAVE_SNPRINTF)
+    vsnprintf (ret, result_len, format, argptr);
 #endif
     va_end (argptr);
 
@@ -244,6 +243,79 @@ yutf8_sprintf (yutf8_t * out, const char * format, ...)
 }
 /* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
+YUTF8_EXPORT yt_func_exit_code_t
+yutf8_foreach (
+        yutf8_t * yutf8, yutf8_foreach_kb kb, void * user)
+{
+    if (yutf8 == NULL) return YT_FUNC_BAD_INPUT;
+    if (yutf8->value_ == NULL) return YT_FUNC_OK;
+
+    const char * iter = yutf8->value_;
+    uint32_t crt_letter;
+    uint32_t crt_char;
+    uint32_t second_char;
+    uint32_t third_char;
+    uint32_t fourth_char;
+    size_t offset = 0;
+    size_t index = 0;
+    size_t addition;
+    yt_func_exit_code_t exitcode = YT_FUNC_OK;
+
+#   define BAD_SEQUENCE {YT_BREAKPOINT; break;}
+
+    for (;;) {
+        // get current character and advance the pointer
+        crt_char = *iter++;
+        if (crt_char == 0) break;
+
+        if (crt_char & YUTF8_FIRST_BIT) {
+            if (crt_char & YUTF8_THIRD_BIT) {
+                if (crt_char & YUTF8_FOURTH_BIT) {
+                    crt_letter  = (crt_char & 0x07) << 18;
+                    second_char = *iter++;
+                    if (second_char == 0) BAD_SEQUENCE
+                    crt_letter += (second_char & 0x3f) << 12;
+                    third_char  = *iter++;
+                    if (third_char == 0) BAD_SEQUENCE
+                    crt_letter += (third_char & 0x3f) << 6;;
+                    fourth_char = *iter++;
+                    if (fourth_char == 0) BAD_SEQUENCE
+                    crt_letter += (fourth_char & 0x3f);
+                    addition = 4;
+                } else {
+                    crt_letter  = (crt_char & 0x0f) << 12;
+                    second_char = *iter++;
+                    if (second_char == 0) BAD_SEQUENCE
+                    crt_letter += (second_char & 0x3f) << 6;
+                    third_char  = *iter++;
+                    if (third_char == 0) BAD_SEQUENCE
+                    crt_letter += (third_char & 0x3f);
+                    addition = 3;
+                }
+            } else {
+                crt_letter  = (crt_char & 0x1f) << 6;
+                second_char = *iter++;
+                if (second_char == 0) BAD_SEQUENCE;
+                crt_letter += (second_char & 0x3f);
+                addition = 2;
+            }
+        } else {
+            crt_letter = crt_char;
+            addition = 1;
+        }
+
+        // inform the user about this one
+        exitcode = kb (yutf8, crt_letter, offset, index, user);
+        if (exitcode != YT_FUNC_OK) break;
+
+        // advance our counters
+        offset += addition;
+        ++index;
+    }
+    return exitcode;
+}
+/* ========================================================================= */
 
 /*  FUNCTIONS    =========================================================== */
 //

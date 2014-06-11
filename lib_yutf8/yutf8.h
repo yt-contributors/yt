@@ -18,6 +18,7 @@
 /*  INCLUDES    ------------------------------------------------------------ */
 
 #include <yt/yt.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,6 +41,25 @@ typedef struct _yutf8_t {
 
 } yutf8_t;
 
+
+//! special values for bytes
+///
+typedef enum _yutf8_special_t {
+
+    YUTF8_FIRST_BIT  = 128, /**< first byte > 127 => beyond the ASCII range. */
+    YUTF8_SECOND_BIT = 64,  /**<  */
+    YUTF8_THIRD_BIT  = 32,  /**< first byte > 224 => at least a three-octet code point. */
+    YUTF8_FOURTH_BIT = 16,  /**< first byte > 240 => four-octet code point */
+    YUTF8_FIFTH_BIT  = 8,   /**<  */
+
+} yutf8_special_t;
+
+
+const unsigned char kFirstBitMask = 128; // 1000000
+const unsigned char kSecondBitMask = 64; // 0100000
+const unsigned char kThirdBitMask = 32; // 0010000
+const unsigned char kFourthBitMask = 16; // 0001000
+const unsigned char kFifthBitMask = 8; // 0000100
 
 //! may be used to add special directives to export function
 /// @{
@@ -149,6 +169,37 @@ yutf8_sprintf (
 ///@}
 // == == == == == == == == == == == == == == == == == == == == == ==
 
+
+// == == == == == == == == == == == == == == == == == == == == == ==
+/** @name Iterators
+ *  Passing through all code points in an utf8 string
+ */
+///@{
+
+//! callback function used to iterate utf8 code points ("letters")
+///
+typedef yt_func_exit_code_t (*yutf8_foreach_kb) (
+        struct _yutf8_t * yutf8,
+        uint32_t code_point,
+        size_t offset,
+        size_t index,
+        void * user
+        );
+
+//! iterator; passes through all code points
+///
+/// If the callback returns anything else than YT_FUNC_OK the
+/// loop is terminated early and that particular value is returned.
+///
+YUTF8_EXPORT yt_func_exit_code_t
+yutf8_foreach (
+        struct _yutf8_t * yutf8,
+        yutf8_foreach_kb kb,
+        void * user);
+
+
+///@}
+// == == == == == == == == == == == == == == == == == == == == == ==
 
 /*  FUNCTIONS    =========================================================== */
 //
