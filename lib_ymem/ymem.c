@@ -45,7 +45,7 @@
 /*  FUNCTIONS    ----------------------------------------------------------- */
 
 /* ------------------------------------------------------------------------- */
-YLOGGER_EXPORT yt_func_exit_code_t
+YMEM_EXPORT yt_func_exit_code_t
 ymem_init (ymem_t * ymem)
 {
     return YT_FUNC_OK;
@@ -53,7 +53,7 @@ ymem_init (ymem_t * ymem)
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-YLOGGER_EXPORT void
+YMEM_EXPORT void
 ymem_end (ymem_t * ymem)
 {
 
