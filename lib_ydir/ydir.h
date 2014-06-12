@@ -383,41 +383,91 @@ ydir_set_current (
 
 // == == == == == == == == == == == == == == == == == == == == == ==
 /** @name Iterators
- * Client code can iterate in all sorts of items.
+ * Client code can iterate in all sorts of items. The pattern can
+ * contain YDIR_PATTERN_CHARACTER and/or YDIR_PATTERN_GROUP. Do not
+ * make any other assumptions about its internal workings as they
+ * may be subject to change.
  */
 ///@{
+
+#ifdef TARGET_SYSTEM_WIN32
+//! pattern to match any individual character
+#   define YDIR_PATTERN_CHARACTER "?"
+//! pattern to match a group of characters
+#   define YDIR_PATTERN_GROUP "*"
+#else
+//! pattern to match any individual character
+#   define YDIR_PATTERN_CHARACTER "."
+//! pattern to match a group of characters
+#   define YDIR_PATTERN_GROUP ".*"
+#endif
+
+//! type filter flags
+typedef enum _ydir_iter_flags_t{
+    YDIR_ITER_FILES_AND_DIRECTORIES = 0,
+    YDIR_ITER_EXCLUDE_DIRECTORIES = 0x0001,   /**< no dirs reach the callback */
+    YDIR_ITER_EXCLUDE_FILES = 0x0002,   /**< no files reach the callback */
+    YDIR_ITER_ALL_DIRECTORIES = 0x0004, /**< don't use the pattern for directories, dump all to the callback */
+    YDIR_ITER_ALL_FILES = 0x0008,       /**< don't use the pattern for files, dump all to the callback */
+
+    YDIR_ITER_RECURSIVE = 0x0010
+} ydir_iter_flags_t;
+
 
 //! callback used to iterate in items from a path
 ///
 /// @return non-zero to terminate the loop
 ///
-typedef int (*ydir_iter_kb) (
+typedef yt_func_exit_code_t (*ydir_iter_kb) (
         struct _ydir_t * ydir,
         const char * absolute_path,
+        const char * name_only,
         int is_file,
         void * user);
 
 //! calls the callback for each file or directory
 ///
-YDIR_EXPORT int
+/// This is the most general form, allowing to customise all parameters.
+/// Other functions will call this function with appropriate switches.
+///
+YDIR_EXPORT yt_func_exit_code_t
 ydir_foreach (
+        struct _ydir_t * ydir,
+        const char * pattern,
+        int flags,
+        ydir_iter_kb kb,
+        void * user);
+
+//! calls the callback for each top level directory
+///
+YDIR_EXPORT yt_func_exit_code_t
+ydir_foreach_top_dir (
         struct _ydir_t * ydir,
         const char * pattern,
         ydir_iter_kb kb,
         void * user);
 
-//! calls the callback for each directory
+//! calls the callback for each directory in all subdirectories
 ///
-YDIR_EXPORT int
+YDIR_EXPORT yt_func_exit_code_t
 ydir_foreach_dir (
         struct _ydir_t * ydir,
         const char * pattern,
         ydir_iter_kb kb,
         void * user);
 
-//! calls the callback for each file
+//! calls the callback for each file inside the directory
 ///
-YDIR_EXPORT int
+YDIR_EXPORT yt_func_exit_code_t
+ydir_foreach_top_file (
+        struct _ydir_t * ydir,
+        const char * pattern,
+        ydir_iter_kb kb,
+        void * user);
+
+//! calls the callback for each file in all subdirectories
+///
+YDIR_EXPORT yt_func_exit_code_t
 ydir_foreach_file (
         struct _ydir_t * ydir,
         const char * pattern,

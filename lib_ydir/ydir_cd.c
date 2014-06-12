@@ -18,7 +18,7 @@
 /*  INCLUDES    ------------------------------------------------------------ */
 
 #include "ydir.h"
-#include <yt/ymem.h>
+#include "ydir_internal.h"
 
 #include <string.h>
 
@@ -35,6 +35,7 @@
 #else
 #define ROOT_LENGTH 1
 #endif
+
 /*  DEFINITIONS    ========================================================= */
 //
 //
@@ -50,11 +51,11 @@
 /*  FUNCTIONS    ----------------------------------------------------------- */
 
 /* ------------------------------------------------------------------------- */
-YDIR_EXPORT yt_func_exit_code_t
+yt_func_exit_code_t
 ydir_cd_buff (
         const char * base_path, size_t base_path_len,
         const char * new_path, size_t new_path_len,
-        char * out_path, size_t out_allocated_len )
+        char * out_path, size_t out_allocated_len)
 {
     DBG_ASSERT (base_path != NULL);;
     if (base_path_len == 0) {
@@ -150,25 +151,11 @@ YDIR_IMPLEMENT_ME ydir_cd (ydir_t * ydir, const char * path)
 
     yt_func_start;
 
-    if (ydir_path_is_relative (path)) {
-        // compute size requirements and get a buffer large enough
-        size_t new_len = strlen (path);
-        YT_STACKBUFF_INIT(workbuff, char, 512, new_len + ydir->path_.bytes_used_);
-        yt_func_null(workbuff_ptr, workbuff_ptr);
-
-        // create the path in a buffer
-        exitcode = ydir_cd_buff(
-                    ydir->path_.buffer_, ydir->path_.bytes_used_-1,
-                    path, new_len,
-                    workbuff_ptr, workbuff_actual_sz
-                    );
-        if (yt_success(exitcode)) {
-            exitcode = ystring_set (&ydir->path_, workbuff_ptr);
-        }
-        YT_STACKBUFF_END(workbuff);
-    } else {
+    IF_IS_RELATIVE_DO(ydir, path);
+        exitcode = ystring_set (&ydir->path_, absolute_path_ptr);
+    IF_IS_NOT_RELATIVE_DO;
         exitcode = ystring_set (&ydir->path_, path);
-    }
+    END_IF_RELATIVE;
 
     yt_func_end;
     yt_func_ret;

@@ -43,7 +43,7 @@
 /*  FUNCTIONS    ----------------------------------------------------------- */
 
 /* ------------------------------------------------------------------------- */
-YDIR_EXPORT int
+YDIR_EXPORT yt_func_exit_code_t
 YDIR_IMPLEMENT_ME ydir_foreach_file(
         ydir_t * ydir, const char * pattern, ydir_iter_kb kb, void * user)
 {

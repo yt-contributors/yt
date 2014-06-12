@@ -18,6 +18,9 @@
 /*  INCLUDES    ------------------------------------------------------------ */
 
 #include "ydir.h"
+#include "ydir_internal.h"
+
+#include <yt/ymem.h>
 
 #include <string.h>
 
@@ -43,10 +46,33 @@
 /*  FUNCTIONS    ----------------------------------------------------------- */
 
 /* ------------------------------------------------------------------------- */
-YDIR_EXPORT yt_func_exit_code_t
-YDIR_IMPLEMENT_ME ydir_copy(ydir_t * ydir, const char * path)
+yt_func_exit_code_t
+ydir_copy_simple (const char* source, const char * destination)
 {
+
+
     return YT_FUNC_OK;
+
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+YDIR_EXPORT yt_func_exit_code_t
+ydir_copy(ydir_t * ydir, const char * path)
+{
+    if (ydir == NULL) return YT_FUNC_BAD_INPUT;
+    if (path == NULL) return YT_FUNC_BAD_INPUT;
+
+    yt_func_start;
+
+    IF_IS_RELATIVE_DO(ydir, path);
+        exitcode = ydir_copy_simple (ydir->path_.buffer_, absolute_path_ptr);
+    IF_IS_NOT_RELATIVE_DO;
+        exitcode = ydir_copy_simple (ydir->path_.buffer_, path);
+    END_IF_RELATIVE;
+
+    yt_func_end;
+    yt_func_ret;
 }
 /* ========================================================================= */
 
