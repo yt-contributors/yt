@@ -139,6 +139,16 @@ static inline char
 ydir_path_separator ()
 { return YDIR_PATH_SEP_C; }
 
+//! the absolute path stored inside
+///
+/// The pointer is valid until next operation that changes the
+/// path.
+///
+static inline const char *
+ydir_path (
+        struct _ydir_t * ydir)
+{ return ydir == NULL ? NULL : ydir->path_.buffer_; }
+
 //! tell if there is a file at the orther end of the path
 ///
 /// If the path is relative (ydir_path_is_relative() returns 1) internal path is used

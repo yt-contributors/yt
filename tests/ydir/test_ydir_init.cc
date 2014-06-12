@@ -38,6 +38,7 @@ TEST(ydir_init,generic){
     yt_func_exit_code_t exitcode;
     exitcode = ydir_init (&ydir);
     EXPECT_OK(exitcode);
+    EXPECT_STREQ(ydir_path (&ydir), NULL);
     ydir_end (&ydir);
 }
 /* ========================================================================= */

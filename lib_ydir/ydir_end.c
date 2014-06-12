@@ -46,8 +46,8 @@
 YDIR_EXPORT void
 YDIR_IMPLEMENT_ME ydir_end(ydir_t * ydir)
 {
-    if (ydir->internal_path_ != NULL) free (ydir->internal_path_);
-    memset (ydir, 0, sizeof(ydir_t));
+    ystring_end(&ydir->path_);
+    //memset (ydir, 0, sizeof(ydir_t));
 }
 /* ========================================================================= */
 
