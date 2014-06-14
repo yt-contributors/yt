@@ -19,7 +19,7 @@
 //
 /*  DEFINITIONS    --------------------------------------------------------- */
 
-#ifdef AITOWN_WIN32
+#ifdef TARGET_SYSTEM_WIN32
 #define REAL_TREE_DIR "C:"
 #else
 #define REAL_TREE_DIR getenv("HOME")
@@ -76,7 +76,7 @@ TEST(ydir_foreach,generic){
     exitcode = ydir_foreach (
         &ydir,
         YDIR_PATTERN_GROUP,
-        YDIR_ITER_FILES_AND_DIRECTORIES | YDIR_ITER_RECURSIVE,
+        YDIR_ITER_FILES_AND_DIRECTORIES, // | YDIR_ITER_RECURSIVE,
         kb_iter_1,
         &data);
     EXPECT_OK(exitcode);

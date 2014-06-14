@@ -116,7 +116,7 @@ ydir_ensure_size (ydir_foreach_data_t * data, size_t req_size)
 
 /* ------------------------------------------------------------------------- */
 yt_func_exit_code_t
-ydir_append_utf8 (ydir_foreach_data_t * data, const char * new_str)
+ydir_append_utf8 (ydir_foreach_data_t * data, const char * new_str, size_t * used_len)
 {
     size_t new_len = strlen (new_str);
     size_t prev_u = data->used_sz;
@@ -126,11 +126,64 @@ ydir_append_utf8 (ydir_foreach_data_t * data, const char * new_str)
     //dest[0] = YDIR_PATH_SEP_C; ++dest;
     memcpy (dest, new_str, new_len);
     dest[new_len] = 0;
+    if (used_len != NULL) {
+        *used_len = prev_u + new_len;
+    }
     return YT_FUNC_OK;
 }
 /* ========================================================================= */
 
+
 #ifdef TARGET_SYSTEM_WIN32
+/* ------------------------------------------------------------------------- */
+static inline int
+is_entry_directory (WIN32_FIND_DATA * fd)
+{
+    for (;;) {
+        if ( (fd->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
+            break;
+        if ( fd->cFileName[0] == '.' ) {
+            if ( fd->cFileName[1] == 0 ) {
+                break;
+            } else if ( fd->cFileName[1] == '.' ) {
+                if ( fd->cFileName[2] == 0 )
+                    break;
+            }
+        }
+        return 1;
+    }
+    return 0;
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+static inline int
+is_entry_file (WIN32_FIND_DATA * fd)
+{
+    for (;;) {
+        if ( (fd->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
+            break;
+        if ( (fd->dwFileAttributes & FILE_ATTRIBUTE_DEVICE) )
+            break;
+#ifdef YT_DEBUG
+        if ( fd->cFileName[0] == '.' ) {
+            if ( fd->cFileName[1] == 0 ) {
+                DBG_ASSERT(0);
+                break;
+            } else if ( fd->cFileName[1] == '.' ) {
+                if ( fd->cFileName[2] == 0 ) {
+                    DBG_ASSERT(0);
+                    break;
+                }
+            }
+        }
+#endif
+        return 1;
+    }
+    return 0;
+}
+/* ========================================================================= */
+
 /* ------------------------------------------------------------------------- */
 yt_func_exit_code_t
 ydir_foreach_win (ydir_foreach_data_t * data)
@@ -153,12 +206,10 @@ ydir_foreach_win (ydir_foreach_data_t * data)
 
         // copy the pattern at the end by trick it so that it gets overwritten
         if ( (data->flags & YDIR_ITER_ALL_DIRECTORIES) == 0 ) {
-            size_t used_data_pattern = data->used_sz;
-            data->exitcode = ydir_append_utf8 (data, data->pattern);
+            data->exitcode = ydir_append_utf8 (data, data->pattern, NULL);
             if ( data->exitcode != YT_FUNC_OK ) {
                 return data->exitcode;
             }
-            data->used_sz = used_data_pattern;
         } else {
             data->p_buffer[data->used_sz] = '*';
             data->p_buffer[data->used_sz+1] = 0;
@@ -173,8 +224,10 @@ ydir_foreach_win (ydir_foreach_data_t * data)
 
         // for each directory
         do { if ( is_entry_directory (&find_data) ) {
+            size_t used_data_pattern = data->used_sz;
             // append the name of the directory
-            data->exitcode = char_buff_add(&data->chb, find_data.cFileName);
+            data->exitcode = ydir_append_utf8 (
+                        data, find_data.cFileName, &data->used_sz);
             if ( data->exitcode != YT_FUNC_OK ) {
                 break;
             }
@@ -182,11 +235,11 @@ ydir_foreach_win (ydir_foreach_data_t * data)
             // inform the callback
             if ( (data->flags & YDIR_ITER_EXCLUDE_DIRECTORIES) == 0 ) {
                 data->exitcode = data->kb (
-                    data,
+                    data->ydir,
                     data->p_buffer,
                     data->p_buffer+used_data+1,
-                    data->user_data,
-                    0);
+                    0,
+                    data->user);
                 if ( data->exitcode != YT_FUNC_OK ) {
                     break;
                 }
@@ -197,6 +250,7 @@ ydir_foreach_win (ydir_foreach_data_t * data)
             if ( data->exitcode != YT_FUNC_OK ) {
                 break;
             }
+            data->used_sz = used_data_pattern;
         } } while ( FindNextFile (h_find, &find_data) );
 
         // close the search and exit if error
@@ -212,7 +266,7 @@ ydir_foreach_win (ydir_foreach_data_t * data)
         // copy the pattern at the end by trick it so that it gets overwritten
         if ( (data->flags & YDIR_ITER_ALL_FILES) == 0 ) {
             size_t used_data_pattern = data->used_sz;
-            data->exitcode = char_buff_add(&data->chb, data->pattern);
+            data->exitcode = ydir_append_utf8(data, data->pattern, NULL);
             if ( data->exitcode != YT_FUNC_OK ) {
                 return data->exitcode;
             }
@@ -232,18 +286,18 @@ ydir_foreach_win (ydir_foreach_data_t * data)
         // for each file
         do { if ( is_entry_file (&find_data) ) {
             // append the name of the file
-            data->exitcode = char_buff_add(&data->chb, find_data.cFileName);
+            data->exitcode = ydir_append_utf8(data, find_data.cFileName, NULL);
             if ( data->exitcode != YT_FUNC_OK ) {
                 break;
             }
 
             // inform the callback
             data->exitcode = data->kb (
-                data,
+                data->ydir,
                 data->p_buffer,
                 data->p_buffer+used_data+1,
-                data->user_data,
-                1);
+                1,
+                data->user);
             if ( data->exitcode != YT_FUNC_OK ) {
                 break;
             }
@@ -315,7 +369,9 @@ ydir_foreach_posix (ydir_foreach_data_t * data)
             continue;
 
         // copy this name after the path;
-        data->exitcode = ydir_append_utf8 (data, dent->d_name);
+        size_t used_data_pattern = data->used_sz;
+        size_t all_size;
+        data->exitcode = ydir_append_utf8 (data, dent->d_name, &all_size);
         if (data->exitcode != YT_FUNC_OK) {
             break;
         }
@@ -348,10 +404,12 @@ ydir_foreach_posix (ydir_foreach_data_t * data)
 
             // recursive? dive in...
             if ( (data->flags & YDIR_ITER_RECURSIVE) ) {
+                data->used_sz = all_size;
                 data->exitcode = ydir_foreach_posix (data);
                 if ( data->exitcode != YT_FUNC_OK ) {
                     break;
                 }
+                data->used_sz = used_data_pattern;
             }
         } else if ( (data->flags & YDIR_ITER_EXCLUDE_FILES) == 0 ) {
 

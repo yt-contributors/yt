@@ -21,6 +21,12 @@
 #define EXPECT_NNULL(__p__) EXPECT_FALSE(__p__ == NULL)
 #define EXPECT_OK(__x__) EXPECT_EQ(__x__, YT_FUNC_OK)
 
+#ifdef TARGET_SYSTEM_WIN32
+#    define ABSOLUTE_PATH_START "C:\\"
+#else
+#    define ABSOLUTE_PATH_START "/"
+#endif
+
 
 /*  DEFINITIONS    ========================================================= */
 //

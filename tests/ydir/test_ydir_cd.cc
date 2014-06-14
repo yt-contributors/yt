@@ -38,29 +38,29 @@ TEST(ydir_cd,generic){
 
     ydir_t ydir;
     yt_func_exit_code_t exitcode;
-    exitcode = ydir_init_dir (&ydir, YDIR_PATH_SEP "a" YDIR_PATH_SEP "b" YDIR_PATH_SEP "c" YDIR_PATH_SEP "d");
+    exitcode = ydir_init_dir (&ydir, ABSOLUTE_PATH_START "a" YDIR_PATH_SEP "b" YDIR_PATH_SEP "c" YDIR_PATH_SEP "d");
     EXPECT_OK(exitcode);
-    EXPECT_STREQ(ydir_path (&ydir), YDIR_PATH_SEP "a" YDIR_PATH_SEP "b" YDIR_PATH_SEP "c" YDIR_PATH_SEP "d");
+    EXPECT_STREQ(ydir_path (&ydir), ABSOLUTE_PATH_START "a" YDIR_PATH_SEP "b" YDIR_PATH_SEP "c" YDIR_PATH_SEP "d");
 
     exitcode = ydir_cd (&ydir, "e");
     EXPECT_OK(exitcode);
-    EXPECT_STREQ(ydir_path (&ydir), YDIR_PATH_SEP "a" YDIR_PATH_SEP "b" YDIR_PATH_SEP "c" YDIR_PATH_SEP "d" YDIR_PATH_SEP "e");
+    EXPECT_STREQ(ydir_path (&ydir), ABSOLUTE_PATH_START "a" YDIR_PATH_SEP "b" YDIR_PATH_SEP "c" YDIR_PATH_SEP "d" YDIR_PATH_SEP "e");
 
-    exitcode = ydir_cd (&ydir, YDIR_PATH_SEP "x" YDIR_PATH_SEP "y" YDIR_PATH_SEP "z");
+    exitcode = ydir_cd (&ydir, ABSOLUTE_PATH_START "x" YDIR_PATH_SEP "y" YDIR_PATH_SEP "z");
     EXPECT_OK(exitcode);
-    EXPECT_STREQ(ydir_path (&ydir), YDIR_PATH_SEP "x" YDIR_PATH_SEP "y" YDIR_PATH_SEP "z");
+    EXPECT_STREQ(ydir_path (&ydir), ABSOLUTE_PATH_START "x" YDIR_PATH_SEP "y" YDIR_PATH_SEP "z");
 
     exitcode = ydir_cd (&ydir, ".");
     EXPECT_OK(exitcode);
-    EXPECT_STREQ(ydir_path (&ydir), YDIR_PATH_SEP "x" YDIR_PATH_SEP "y" YDIR_PATH_SEP "z");
+    EXPECT_STREQ(ydir_path (&ydir), ABSOLUTE_PATH_START "x" YDIR_PATH_SEP "y" YDIR_PATH_SEP "z");
 
     exitcode = ydir_cd (&ydir, "..");
     EXPECT_OK(exitcode);
-    EXPECT_STREQ(ydir_path (&ydir), YDIR_PATH_SEP "x" YDIR_PATH_SEP "y" );
+    EXPECT_STREQ(ydir_path (&ydir), ABSOLUTE_PATH_START "x" YDIR_PATH_SEP "y" );
 
     exitcode = ydir_cd (&ydir, "..");
     EXPECT_OK(exitcode);
-    EXPECT_STREQ(ydir_path (&ydir), YDIR_PATH_SEP "x" );
+    EXPECT_STREQ(ydir_path (&ydir), ABSOLUTE_PATH_START "x" );
 
     exitcode = ydir_cd (&ydir, "..");
     EXPECT_OK(exitcode);
@@ -72,15 +72,15 @@ TEST(ydir_cd,generic){
 
     exitcode = ydir_cd (&ydir, "y" YDIR_PATH_SEP "z");
     EXPECT_OK(exitcode);
-    EXPECT_STREQ(ydir_path (&ydir), YDIR_PATH_SEP "y" YDIR_PATH_SEP "z");
+    EXPECT_STREQ(ydir_path (&ydir), ABSOLUTE_PATH_START "y" YDIR_PATH_SEP "z");
 
     exitcode = ydir_cd (&ydir, ".." YDIR_PATH_SEP ".." YDIR_PATH_SEP "t" YDIR_PATH_SEP "k");
     EXPECT_OK(exitcode);
-    EXPECT_STREQ(ydir_path (&ydir), YDIR_PATH_SEP "t" YDIR_PATH_SEP "k");
+    EXPECT_STREQ(ydir_path (&ydir), ABSOLUTE_PATH_START "t" YDIR_PATH_SEP "k");
 
     exitcode = ydir_cd (&ydir, "." YDIR_PATH_SEP ".." YDIR_PATH_SEP "g");
     EXPECT_OK(exitcode);
-    EXPECT_STREQ(ydir_path (&ydir), YDIR_PATH_SEP "t" YDIR_PATH_SEP "g");
+    EXPECT_STREQ(ydir_path (&ydir), ABSOLUTE_PATH_START "t" YDIR_PATH_SEP "g");
 
     ydir_end (&ydir);
 
