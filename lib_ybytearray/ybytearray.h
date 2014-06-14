@@ -43,16 +43,16 @@ typedef struct _ybytearray_t {
 
 //! may be used to add special directives to export function
 /// @{
-#ifndef ybytearray_EXPORT
-#define ybytearray_EXPORT
+#ifndef YBYTEARRAY_EXPORT
+#define YBYTEARRAY_EXPORT
 #endif
 /// @}
 
 
 //! not yet implemented
 /// @{
-#ifndef ybytearray_IMPLEMENT_ME
-#define ybytearray_IMPLEMENT_ME
+#ifndef YBYTEARRAY_IMPLEMENT_ME
+#define YBYTEARRAY_IMPLEMENT_ME
 #endif
 /// @}
 
@@ -82,15 +82,15 @@ typedef struct _ybytearray_t {
 ///
 /// Provides the structure with default callbacks.
 ///
-ybytearray_EXPORT yt_func_exit_code_t
-ybytearray_init (
+YBYTEARRAY_EXPORT yt_func_exit_code_t
+YBYTEARRAY_IMPLEMENT_ME ybytearray_init (
         struct _ybytearray_t * ybytearray,
         const char * app_name);
 
 //! terminate
 ///
-ybytearray_EXPORT void
-ybytearray_end (
+YBYTEARRAY_EXPORT void
+YBYTEARRAY_IMPLEMENT_ME ybytearray_end (
         struct _ybytearray_t * ybytearray);
 
 ///@}

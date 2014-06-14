@@ -49,7 +49,7 @@
 /*  FUNCTIONS    ----------------------------------------------------------- */
 
 /* ------------------------------------------------------------------------- */
-ybytearray_EXPORT yt_func_exit_code_t
+YBYTEARRAY_EXPORT yt_func_exit_code_t
 ybytearray_init (ybytearray_t * ybytearray, const char * app_name)
 {
     yt_func_start;
@@ -61,7 +61,7 @@ ybytearray_init (ybytearray_t * ybytearray, const char * app_name)
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-ybytearray_EXPORT void
+YBYTEARRAY_EXPORT void
 ybytearray_end (ybytearray_t * ybytearray)
 {
     memset (ybytearray, 0, sizeof(ybytearray_t));
